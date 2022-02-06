@@ -1,0 +1,15 @@
+title 0.6: New note
+
+note over browser
+Event listener for form submit
+end note
+
+
+browser-> server: HTTP POST /exampleapp/new_note_spa [{content:x, date:y}]
+server-->browser: {message: "note created"}
+
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
