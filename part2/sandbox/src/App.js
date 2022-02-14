@@ -1,17 +1,30 @@
-import { getNodeText } from "@testing-library/react"
+import { useState } from 'react' 
+import Note from './components/Note'
 
-import Note from './components/Note.js'
+const App = (props) => {
+  const [notes, setNotes] = useState(props.notes) 
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
+  const notesToShow = showAll
+  ? notes
+  : notes.filter(note => note.important === true)
 
-const App = ({notes}) => {
+  // ...
 
   return (
     <div>
       <h1>Notes</h1>
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all' }
+        </button>
+      </div>
       <ul>
-      {notes.map(note => 
+        {notesToShow.map(note =>
           <Note key={note.id} note={note} />
         )}
       </ul>
+      // ...    
     </div>
   )
 }
