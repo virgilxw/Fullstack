@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import ReactDOM from 'react-dom'
+import Filterer from "./components/Filterer"
+import Form from "./components/Form"
+import Phonebook from "./components/Phonebook"
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -9,23 +12,13 @@ const App = () => {
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
   const [newName, setNewName] = useState('')
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
-
   const [newNum, setNewNum] = useState('')
-  const handleNumChange = (event) => {
-    setNewNum(event.target.value)
-  }
-
   const [filterString, setFilter] = useState('')
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value)
-  }
   const personsToShow = persons.filter(entry => entry.name.toLowerCase().includes(filterString.toLowerCase()))
 
   const addEntry = (event) => {
-    event.preventDefault()
+
+   event.preventDefault()   
 
     const buffer = {
       id: persons.length + 1,
@@ -33,13 +26,19 @@ const App = () => {
       number: newNum
     }
 
+    const nameEmpty = buffer.name.length === 0
+    const numEmpty = buffer.number.length === 0
+
     const nameMatch = (persons.filter(e => e.name === buffer.name)).length !== 0
     const numMatch = (persons.filter(e => e.number === buffer.number)).length !== 0
 
-    if (nameMatch || numMatch) {
-
+    if (nameEmpty || numEmpty) {
+      const alertString = ((nameEmpty) ? "name" : "").concat((numEmpty) ? " ".concat("phone number") : "")
+      alert(`${alertString} is/are missing`)
+      return 0
+    }
+    else if (nameMatch || numMatch) {
       const alertString = ((nameMatch) ? buffer.name : "").concat((numMatch) ? " ".concat(buffer.number) : "")
-
       alert(`${alertString} is already added to the phonebook`)
       return 0
     } else {
@@ -52,25 +51,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        filter shown with <input value={filterString} onChange={handleFilterChange}></input>
-      </form>
+      <Filterer filterString={filterString} setFilter={setFilter} />
       <h2>add a new</h2>
-      <form onSubmit={addEntry}>
-        <div>
-          name: <input value={newName}
-            onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNum}
-            onChange={handleNumChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form addEntry={addEntry} newName={newName} setNewName={setNewName} newNum={newNum} setNewNum={setNewNum}/>
       <h2>Numbers</h2>
-      {personsToShow.map(entry => <li key={entry.id}>{entry.name} {entry.number}</li>)}
+      <Phonebook personsToShow={personsToShow} />
     </div>
   )
 }
